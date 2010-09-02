@@ -26,20 +26,26 @@ final class assert
         });
     }
 
+    public static function equals($subject, $value, $message)
+    { self::must($subject == $value, $message); }
+
+    public static function strict_equals($subject, $value, $message)
+    { self::must($subject === $value, $message); }
+
     public static function is_true($subject, $message)
-    { self::must(true === $subject, $message); }
+    { self::strict_equals($subject, true, $message); }
 
     public static function is_not_true($subject, $message)
     { self::must(true !== $subject, $message); }
 
     public static function is_false($subject, $message)
-    { self::must(false === $subject, $message); }
+    { self::strict_equals($subject, false, $message); }
 
     public static function is_not_false($subject, $message)
     { self::must(false !== $subject, $message); }
 
     public static function is_null($subject, $message)
-    { self::must(null === $subject, $message); }
+    { self::strict_equals($subject, null, $message); }
 
     public static function is_not_null($subject, $message)
     { self::must(null !== $subject, $message); }
@@ -48,68 +54,69 @@ final class assert
     { self::is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
 
     public static function key_not_missing($array, $key, $message = null)
-    { self::must(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
+    { self::is_true(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
 
     public static function is_array($subject, $message = null)
-    { self::must(is_array($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'array'")); }
+    { self::is_true(is_array($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'array'")); }
 
     public static function is_bool($subject, $message = null)
-    { self::must(is_bool($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'bool'")); }
+    { self::is_true(is_bool($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'bool'")); }
 
     public static function is_callable($subject, $message = null)
-    { self::must(is_callable($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'callable'")); }
+    { self::is_true(is_callable($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'callable'")); }
 
     public static function is_double($subject, $message = null)
-    { self::must(is_double($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'double'")); }
+    { self::is_true(is_double($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'double'")); }
 
     public static function is_float($subject, $message = null)
-    { self::must(is_float($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'float'")); }
+    { self::is_true(is_float($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'float'")); }
 
     public static function is_integer($subject, $message = null)
-    { self::must(is_integer($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'integer'")); }
+    { self::is_true(is_integer($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'integer'")); }
 
     public static function is_long($subject, $message = null)
-    { self::must(is_long($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'long'")); }
+    { self::is_true(is_long($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'long'")); }
 
     public static function is_numeric($subject, $message = null)
-    { self::must(is_numeric($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not 'numeric'")); }
+    { self::is_true(is_numeric($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not 'numeric'")); }
 
     public static function is_object($subject, $message = null)
-    { self::must(is_object($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'object'")); }
+    { self::is_true(is_object($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'object'")); }
 
     public static function is_real($subject, $message = null)
-    { self::must(is_real($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'real'")); }
+    { self::is_true(is_real($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'real'")); }
 
     public static function is_resource($subject, $message = null)
-    { self::must(is_resource($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'resource'")); }
+    { self::is_true(is_resource($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'resource'")); }
 
     public static function is_scalar($subject, $message = null)
-    { self::must(is_scalar($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'scalar'")); }
+    { self::is_true(is_scalar($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'scalar'")); }
 
     public static function is_string($subject, $message = null)
-    { self::must(is_string($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'string'")); }
+    { self::is_true(is_string($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'string'")); }
 
     public static function value_empty($subject, $message)
-    { self::must(empty($subject), $message); }
+    { self::is_true(empty($subject), $message); }
 
     public static function value_not_empty($subject, $message)
-    { self::must( ! empty($subject), $message); }
+    { self::is_false(empty($subject), $message); }
 
-    public static function hash_equal($subject, $reference, $message)
-    { self::must(0 === strcmp(sha1(serialize($subject)), sha1(serialize($reference))), $message); }
+    public static function hash_equals($subject, $reference, $message)
+    { self::strict_equals(strcmp(sha1(serialize($subject)), sha1(serialize($reference))), 0, $message); }
 
     public static function is_reference(&$a, &$b, $message = null)
     {
-        if (is_array($a)) {
+        if (is_array($a) && is_array($b)) {
             $a['__assert_reference'] = true;
             self::is_true(isset ($b['__assert_reference']), (isset ($message) ? $message : 'array $b did not appear to be a reference to array $a'));
             unset ($b['__assert_reference']);
-        } else {
+        } else if (is_object($a) && is_object($b)) {
             $a->__assert_reference = true;
             self::is_true(isset ($b->__assert_reference), (isset ($message) ? $message : 'objects $b did not appear to be a reference to object $a'));
             unset ($b->__assert_reference);
+        } else {
+            self::strict_equals($a, $b, $message);
         }
-        return $a === $b;
     }
 
     public static function must($condition, $message)
