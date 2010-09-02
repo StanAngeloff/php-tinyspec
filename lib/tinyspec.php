@@ -17,34 +17,6 @@ function format($string)
 
 final class assert
 {
-    const QUEUE_EMPTY = ':empty';
-    const QUEUE_POP   = ':pop';
-
-    public static function queue($block)
-    {
-        static $queue = array();
-        if (self::QUEUE_EMPTY === $block) {
-            return $queue = array();
-        } else if (self::QUEUE_POP === $block) {
-            return array_pop($queue);
-        }
-        array_push($queue, $block);
-        return sizeof ($queue);
-    }
-
-    public static function before()
-    { self::queue(self::QUEUE_EMPTY); }
-
-    public static function after()
-    {
-        while ($operation = self::queue(self::QUEUE_POP)) {
-            call_user_func($operation);
-            if (Group::$unit['failed']) {
-                break;
-            }
-        }
-    }
-
     public static function throws($needle)
     {
         self::queue(function() use ($needle) {
@@ -144,6 +116,34 @@ final class assert
     {
         if ( ! $condition) {
             throw new AssertException($message);
+        }
+    }
+
+    const QUEUE_EMPTY = ':empty';
+    const QUEUE_POP   = ':pop';
+
+    public static function queue($block)
+    {
+        static $queue = array();
+        if (self::QUEUE_EMPTY === $block) {
+            return $queue = array();
+        } else if (self::QUEUE_POP === $block) {
+            return array_pop($queue);
+        }
+        array_push($queue, $block);
+        return sizeof ($queue);
+    }
+
+    public static function before()
+    { self::queue(self::QUEUE_EMPTY); }
+
+    public static function after()
+    {
+        while ($operation = self::queue(self::QUEUE_POP)) {
+            call_user_func($operation);
+            if (Group::$unit['failed']) {
+                break;
+            }
         }
     }
 }
