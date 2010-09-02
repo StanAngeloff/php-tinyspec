@@ -136,3 +136,6 @@ The result of running the specs:
 There is plenty of work to be done -- starting from how specs are run to what
 assertions are built into the framework. If you find your favourite `assert::?`
 method to be missing, fork the project and add it.
+
+Join **#tinyspec** on **Freenode** if you want to chat. There is usually someone
+around between 10am-18pm UTC.
