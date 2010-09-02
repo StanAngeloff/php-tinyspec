@@ -6,102 +6,6 @@ namespace Spec;
 function describe($description)
 { return new Group($description); }
 
-const QUEUE_EMPTY = ':empty';
-const QUEUE_POP   = ':pop';
-
-function assert_queue($block)
-{
-    static $queue = array();
-    if (QUEUE_EMPTY === $block) {
-        return $queue = array();
-    } else if (QUEUE_POP === $block) {
-        return array_pop($queue);
-    }
-    array_push($queue, $block);
-    return sizeof ($queue);
-}
-
-function assert_before()
-{ assert_queue(QUEUE_EMPTY); }
-
-function assert_after()
-{
-    while ($operation = assert_queue(QUEUE_POP)) {
-        call_user_func($operation);
-        if (Group::$unit['failed']) {
-            break;
-        }
-    }
-}
-
-function assert_throws($needle)
-{
-    assert_queue(function() use ($needle) {
-        assert_is_true(Group::$unit['failed'], format("{red}did not throw '{bold}$needle{/bold}'{/red}"));
-        assert_is_not_false(strpos(Group::$unit['message'], $needle), format('{red}' . Group::$unit['message'] . " did not contain '{bold}$needle{/bold}'{/red}"));
-        Group::$unit['failed'] = false;
-    });
-}
-
-function assert_is_true($subject, $message)
-{ assert_must(true === $subject, $message); }
-
-function assert_is_not_true($subject, $message)
-{ assert_must(true !== $subject, $message); }
-
-function assert_is_false($subject, $message)
-{ assert_must(false === $subject, $message); }
-
-function assert_is_not_false($subject, $message)
-{ assert_must(false !== $subject, $message); }
-
-function assert_is_null($subject, $message)
-{ assert_must(null === $subject, $message); }
-
-function assert_is_not_null($subject, $message)
-{ assert_must(null !== $subject, $message); }
-
-function assert_key_missing($array, $key, $message = null)
-{ assert_is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
-
-function assert_key_not_missing($array, $key, $message = null)
-{ assert_must(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
-
-function assert_is_array($subject, $message = null)
-{ assert_must(is_array($subject), (isset ($message) ? $message : "'$subject' is not an 'array'")); }
-
-function assert_is_string($subject, $message = null)
-{ assert_must(is_string($subject), (isset ($message) ? $message : "'$subject' is not a 'string'")); }
-
-function assert_value_empty($subject, $message)
-{ assert_must(empty($subject), $message); }
-
-function assert_value_not_empty($subject, $message)
-{ assert_must( ! empty($subject), $message); }
-
-function assert_hash_equal($subject, $reference, $message)
-{ assert_must(0 === strcmp(sha1(serialize($subject)), sha1(serialize($reference))), $message); }
-
-function assert_is_reference(&$a, &$b, $message = null)
-{
-    if (is_array($a)) {
-        $a['__assert_reference'] = true;
-        assert_is_true(isset ($b['__assert_reference']), (isset ($message) ? $message : 'array $b did not appear to be a reference to array $a'));
-        unset ($b['__assert_reference']);
-    } else {
-        $a->__assert_reference = true;
-        assert_is_true(isset ($b->__assert_reference), (isset ($message) ? $message : 'objects $b did not appear to be a reference to object $a'));
-        unset ($b->__assert_reference);
-    }
-}
-
-function assert_must($condition, $message)
-{
-    if ( ! $condition) {
-        throw new AssertException($message);
-    }
-}
-
 function format($string)
 {
     return str_replace(
@@ -109,6 +13,139 @@ function format($string)
         array("\033[1m", "\033[22m", "\033[4m",     "\033[24m",     "\033[33m",  "\033[39m", "\033[31m", "\033[39m", "\033[32m", "\033[39m", "\033[37m", "\033[39m"),
         $string
     );
+}
+
+final class assert
+{
+    const QUEUE_EMPTY = ':empty';
+    const QUEUE_POP   = ':pop';
+
+    public static function queue($block)
+    {
+        static $queue = array();
+        if (self::QUEUE_EMPTY === $block) {
+            return $queue = array();
+        } else if (self::QUEUE_POP === $block) {
+            return array_pop($queue);
+        }
+        array_push($queue, $block);
+        return sizeof ($queue);
+    }
+
+    public static function before()
+    { self::queue(self::QUEUE_EMPTY); }
+
+    public static function after()
+    {
+        while ($operation = self::queue(self::QUEUE_POP)) {
+            call_user_func($operation);
+            if (Group::$unit['failed']) {
+                break;
+            }
+        }
+    }
+
+    public static function throws($needle)
+    {
+        self::queue(function() use ($needle) {
+            assert::is_true(Group::$unit['failed'], format("{red}did not throw '{bold}$needle{/bold}'{/red}"));
+            assert::is_not_false(strpos(Group::$unit['message'], $needle), format('{red}' . Group::$unit['message'] . " did not contain '{bold}$needle{/bold}'{/red}"));
+            Group::$unit['failed'] = false;
+        });
+    }
+
+    public static function is_true($subject, $message)
+    { self::must(true === $subject, $message); }
+
+    public static function is_not_true($subject, $message)
+    { self::must(true !== $subject, $message); }
+
+    public static function is_false($subject, $message)
+    { self::must(false === $subject, $message); }
+
+    public static function is_not_false($subject, $message)
+    { self::must(false !== $subject, $message); }
+
+    public static function is_null($subject, $message)
+    { self::must(null === $subject, $message); }
+
+    public static function is_not_null($subject, $message)
+    { self::must(null !== $subject, $message); }
+
+    public static function key_missing($array, $key, $message = null)
+    { self::is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
+
+    public static function key_not_missing($array, $key, $message = null)
+    { self::must(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
+
+    public static function is_array($subject, $message = null)
+    { self::must(is_array($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'array'")); }
+
+    public static function is_bool($subject, $message = null)
+    { self::must(is_bool($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'bool'")); }
+
+    public static function is_callable($subject, $message = null)
+    { self::must(is_callable($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'callable'")); }
+
+    public static function is_double($subject, $message = null)
+    { self::must(is_double($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'double'")); }
+
+    public static function is_float($subject, $message = null)
+    { self::must(is_float($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'float'")); }
+
+    public static function is_integer($subject, $message = null)
+    { self::must(is_integer($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'integer'")); }
+
+    public static function is_long($subject, $message = null)
+    { self::must(is_long($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'long'")); }
+
+    public static function is_numeric($subject, $message = null)
+    { self::must(is_numeric($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not 'numeric'")); }
+
+    public static function is_object($subject, $message = null)
+    { self::must(is_object($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'object'")); }
+
+    public static function is_real($subject, $message = null)
+    { self::must(is_real($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'real'")); }
+
+    public static function is_resource($subject, $message = null)
+    { self::must(is_resource($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'resource'")); }
+
+    public static function is_scalar($subject, $message = null)
+    { self::must(is_scalar($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'scalar'")); }
+
+    public static function is_string($subject, $message = null)
+    { self::must(is_string($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'string'")); }
+
+    public static function value_empty($subject, $message)
+    { self::must(empty($subject), $message); }
+
+    public static function value_not_empty($subject, $message)
+    { self::must( ! empty($subject), $message); }
+
+    public static function hash_equal($subject, $reference, $message)
+    { self::must(0 === strcmp(sha1(serialize($subject)), sha1(serialize($reference))), $message); }
+
+    public static function is_reference(&$a, &$b, $message = null)
+    {
+        if (is_array($a)) {
+            $a['__assert_reference'] = true;
+            self::is_true(isset ($b['__assert_reference']), (isset ($message) ? $message : 'array $b did not appear to be a reference to array $a'));
+            unset ($b['__assert_reference']);
+        } else {
+            $a->__assert_reference = true;
+            self::is_true(isset ($b->__assert_reference), (isset ($message) ? $message : 'objects $b did not appear to be a reference to object $a'));
+            unset ($b->__assert_reference);
+        }
+        return $a === $b;
+    }
+
+    public static function must($condition, $message)
+    {
+        if ( ! $condition) {
+            throw new AssertException($message);
+        }
+    }
 }
 
 
@@ -218,13 +255,13 @@ final class Group
         $result = null;
         $this->total ++;
         try {
-            assert_before();
+            assert::before();
             $result = call_user_func_array($callable, $args);
         } catch (\Exception $exception) {
             $this->catch_exception($exception);
         }
         try {
-            assert_after();
+            assert::after();
         } catch (\Exception $exception) {
             $this->catch_exception($exception);
         }
