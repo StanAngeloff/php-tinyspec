@@ -43,11 +43,11 @@ The result of running the specs:
    thrown. Fails when no exception was encountered or the message did not
    contain `$needle`.
 
-- **equals**($subject, $value, $message)
+- **equals**($value, $subject, $message)
 
    Validate `$subject` is `$value` using `==`.
 
-- **strict_equals($subject, $value, $message)**
+- **strict_equals($value, $subject, $message)**
 
    Validate `$subject` is `$value` using strict `===`.
 
@@ -93,11 +93,11 @@ The result of running the specs:
 
   Validate `$subject` is of the given type.
 
-- **key_missing**($array, $key, $message = null)
+- **key_missing**($key, $array, $message = null)
 
    Validate `$key` exists in `$array` even if its value is `NULL`.
 
-- **key_not_missing**($array, $key, $message = null)
+- **key_not_missing**($key, $array, $message = null)
 
    Validate `$key` is missing in `$array`.
 
@@ -109,13 +109,13 @@ The result of running the specs:
 
    Validate non-falsy value was present in `$subject`.
 
-- **hash_equals**($subject, $reference, $message)
+- **hash_equals**($reference, $subject, $message)
 
    Serialize `$subject` and `$reference` and compare their hash values. Both
    variables must be exactly the same (incl. ordering of keys) for this
    validation to pass.
 
-- **is_reference**(&$a, &$b, $message = null)
+- **is_reference**(&$reference, &$subject, $message = null)
 
    Works on objects and arrays only. Inserts a temporary key/property and
    unsets it if it exists in both places.

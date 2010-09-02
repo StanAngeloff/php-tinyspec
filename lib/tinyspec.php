@@ -26,10 +26,10 @@ final class assert
         });
     }
 
-    public static function equals($subject, $value, $message)
+    public static function equals($value, $subject, $message)
     { self::must($subject == $value, $message); }
 
-    public static function strict_equals($subject, $value, $message)
+    public static function strict_equals($value, $subject, $message)
     { self::must($subject === $value, $message); }
 
     public static function is_true($subject, $message)
@@ -49,12 +49,6 @@ final class assert
 
     public static function is_not_null($subject, $message)
     { self::must(null !== $subject, $message); }
-
-    public static function key_missing($array, $key, $message = null)
-    { self::is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
-
-    public static function key_not_missing($array, $key, $message = null)
-    { self::is_true(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
 
     public static function is_array($subject, $message = null)
     { self::is_true(is_array($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'array'")); }
@@ -95,27 +89,33 @@ final class assert
     public static function is_string($subject, $message = null)
     { self::is_true(is_string($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'string'")); }
 
+    public static function key_missing($key, $array, $message = null)
+    { self::is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
+
+    public static function key_not_missing($key, $array, $message = null)
+    { self::is_true(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
+
     public static function value_empty($subject, $message)
     { self::is_true(empty($subject), $message); }
 
     public static function value_not_empty($subject, $message)
     { self::is_false(empty($subject), $message); }
 
-    public static function hash_equals($subject, $reference, $message)
+    public static function hash_equals($reference, $subject, $message)
     { self::strict_equals(strcmp(sha1(serialize($subject)), sha1(serialize($reference))), 0, $message); }
 
-    public static function is_reference(&$a, &$b, $message = null)
+    public static function is_reference(&$reference, &$subject, $message = null)
     {
-        if (is_array($a) && is_array($b)) {
-            $a['__assert_reference'] = true;
-            self::is_true(isset ($b['__assert_reference']), (isset ($message) ? $message : 'array $b did not appear to be a reference to array $a'));
-            unset ($b['__assert_reference']);
-        } else if (is_object($a) && is_object($b)) {
-            $a->__assert_reference = true;
-            self::is_true(isset ($b->__assert_reference), (isset ($message) ? $message : 'objects $b did not appear to be a reference to object $a'));
-            unset ($b->__assert_reference);
+        if (is_array($reference) && is_array($subject)) {
+            $reference['__assert_reference'] = true;
+            self::is_true(isset ($subject['__assert_reference']), (isset ($message) ? $message : 'array $subject did not appear to be a reference to array $reference'));
+            unset ($subject['__assert_reference']);
+        } else if (is_object($reference) && is_object($subject)) {
+            $reference->__assert_reference = true;
+            self::is_true(isset ($subject->__assert_reference), (isset ($message) ? $message : 'objects $subject did not appear to be a reference to object $reference'));
+            unset ($subject->__assert_reference);
         } else {
-            self::strict_equals($a, $b, $message);
+            self::strict_equals($reference, $subject, $message);
         }
     }
 
