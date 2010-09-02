@@ -51,6 +51,19 @@ The result of running the specs:
 
    Validate `$subject` is `$value` using strict `===`.
 
+- **hash_equals**($reference, $subject, $message)
+
+   Serialize `$subject` and `$reference` and compare their hash values. Both
+   variables must be exactly the same (incl. ordering of keys) for this
+   validation to pass.
+
+- **contains**($needle, $subject, $message = null)
+
+   Works on arrays, strings and iterators. Validates `$needle` is in
+   `$subject`. Uses `in_array` or `strpos` internally. If a key exists with
+   the same name, it is not taken into account since we are checking for a
+   value.
+
 - **is_true**($subject, $message)
 
    Strict `$subject === true`
@@ -93,6 +106,11 @@ The result of running the specs:
 
   Validate `$subject` is of the given type.
 
+- **is_reference**(&$reference, &$subject, $message = null)
+
+   Works on objects and arrays only. Inserts a temporary key/property and
+   unsets it if it exists in both places.
+
 - **key_missing**($key, $array, $message = null)
 
    Validate `$key` exists in `$array` even if its value is `NULL`.
@@ -108,17 +126,6 @@ The result of running the specs:
 - **value_not_empty**($subject, $message)
 
    Validate non-falsy value was present in `$subject`.
-
-- **hash_equals**($reference, $subject, $message)
-
-   Serialize `$subject` and `$reference` and compare their hash values. Both
-   variables must be exactly the same (incl. ordering of keys) for this
-   validation to pass.
-
-- **is_reference**(&$reference, &$subject, $message = null)
-
-   Works on objects and arrays only. Inserts a temporary key/property and
-   unsets it if it exists in both places.
 
 - **must**($condition, $message)
 

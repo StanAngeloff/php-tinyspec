@@ -32,6 +32,28 @@ final class assert
     public static function strict_equals($value, $subject, $message)
     { self::must($subject === $value, $message); }
 
+    public static function hash_equals($reference, $subject, $message)
+    { self::strict_equals(strcmp(sha1(serialize($subject)), sha1(serialize($reference))), 0, $message); }
+
+    public static function contains($needle, $subject, $message = null)
+    {
+        $description = (isset ($message) ? $message : "'$needle' was not found");
+        if (is_array($subject)) {
+            self::is_true(in_array($needle, $subject), $message);
+        } else if (is_string($subject)) {
+            self::is_not_false(strpos($subject, $needle), $message);
+        } else {
+            $iterator_has_value = false;
+            foreach ($subject as $value) {
+                if ($value === $needle) {
+                    $iterator_has_value = true;
+                    break;
+                }
+            }
+            self::is_true($iterator_has_value, $message);
+        }
+    }
+
     public static function is_true($subject, $message)
     { self::strict_equals($subject, true, $message); }
 
@@ -89,21 +111,6 @@ final class assert
     public static function is_string($subject, $message = null)
     { self::is_true(is_string($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not a 'string'")); }
 
-    public static function key_missing($key, $array, $message = null)
-    { self::is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
-
-    public static function key_not_missing($key, $array, $message = null)
-    { self::is_true(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
-
-    public static function value_empty($subject, $message)
-    { self::is_true(empty($subject), $message); }
-
-    public static function value_not_empty($subject, $message)
-    { self::is_false(empty($subject), $message); }
-
-    public static function hash_equals($reference, $subject, $message)
-    { self::strict_equals(strcmp(sha1(serialize($subject)), sha1(serialize($reference))), 0, $message); }
-
     public static function is_reference(&$reference, &$subject, $message = null)
     {
         if (is_array($reference) && is_array($subject)) {
@@ -118,6 +125,18 @@ final class assert
             self::strict_equals($reference, $subject, $message);
         }
     }
+
+    public static function key_missing($key, $array, $message = null)
+    { self::is_false(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was present")); }
+
+    public static function key_not_missing($key, $array, $message = null)
+    { self::is_true(array_key_exists($key, $array), (isset ($message) ? $message : "'$key' key was missing")); }
+
+    public static function value_empty($subject, $message)
+    { self::is_true(empty($subject), $message); }
+
+    public static function value_not_empty($subject, $message)
+    { self::is_false(empty($subject), $message); }
 
     public static function must($condition, $message)
     {
