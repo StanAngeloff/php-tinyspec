@@ -13,7 +13,7 @@ require __DIR__ . '/../lib/tinyspec.php';
     'topic' => function() { return new Calculator(); },
     'sum works with floats' => function($topic) {
       $topic->sum(1.5, 2.5);
-      \Spec\assert::must(4 == $topic->result, 'did not return correct value');
+      \Spec\assert::equals(4, $topic->result, 'did not return correct value');
     },
     'sum fails with strings' => function($topic) {
       \Spec\assert::throws('cannot sum strings');

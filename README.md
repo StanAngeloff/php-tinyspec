@@ -14,7 +14,7 @@ php-tinyspec is a one-file framework for test-driven development in PHP 5.3+
         'topic' => function() { return new Calculator(); },
         'sum works with floats' => function($topic) {
           $topic->sum(1.5, 2.5);
-          \Spec\assert::must(4 == $topic->result);
+          \Spec\assert::equals(4, $topic->result, 'did not return correct value');
         },
         'sum fails with strings' => function($topic) {
           \Spec\assert::throws('cannot sum strings');
@@ -43,6 +43,14 @@ The result of running the specs:
    thrown. Fails when no exception was encountered or the message did not
    contain `$needle`.
 
+- **equals**($subject, $value, $message)
+
+   Validate `$subject` is `$value` using `==`.
+
+- **strict_equals($subject, $value, $message)**
+
+   Validate `$subject` is `$value` using strict `===`.
+
 - **is_true**($subject, $message)
 
    Strict `$subject === true`
@@ -67,14 +75,6 @@ The result of running the specs:
 
    Strict `$subject !== null`
 
-- **key_missing**($array, $key, $message = null)
-
-   Validate `$key` exists in `$array` even if its value is `NULL`.
-
-- **key_not_missing**($array, $key, $message = null)
-
-   Validate `$key` is missing in `$array`.
-
 - **is_array**($subject, $message = null)<br \/>
   **is_bool**($subject, $message = null)<br \/>
   **is_callable**($subject, $message = null)<br \/>
@@ -93,6 +93,14 @@ The result of running the specs:
 
   Validate `$subject` is of the given type.
 
+- **key_missing**($array, $key, $message = null)
+
+   Validate `$key` exists in `$array` even if its value is `NULL`.
+
+- **key_not_missing**($array, $key, $message = null)
+
+   Validate `$key` is missing in `$array`.
+
 - **value_empty**($subject, $message)
 
    Validate no value was present in `$subject`. Uses `empty(..)` internally.
@@ -101,7 +109,7 @@ The result of running the specs:
 
    Validate non-falsy value was present in `$subject`.
 
-- **hash_equal**($subject, $reference, $message)
+- **hash_equals**($subject, $reference, $message)
 
    Serialize `$subject` and `$reference` and compare their hash values. Both
    variables must be exactly the same (incl. ordering of keys) for this
@@ -110,7 +118,7 @@ The result of running the specs:
 - **is_reference**(&$a, &$b, $message = null)
 
    Works on objects and arrays only. Inserts a temporary key/property and
-   unsets it if it exists in both variables.
+   unsets it if it exists in both places.
 
 - **must**($condition, $message)
 
