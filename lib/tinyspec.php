@@ -29,8 +29,14 @@ final class assert
     public static function equals($value, $subject, $message)
     { self::must($subject == $value, $message); }
 
+    public static function not_equals($value, $subject, $message)
+    { self::must($subject != $value, $message); }
+
     public static function strict_equals($value, $subject, $message)
     { self::must($subject === $value, $message); }
+
+    public static function strict_not_equals($value, $subject, $message)
+    { self::must($subject !== $value, $message); }
 
     public static function hash_equals($reference, $subject, $message)
     { self::strict_equals(strcmp(sha1(serialize($subject)), sha1(serialize($reference))), 0, $message); }
@@ -55,22 +61,22 @@ final class assert
     }
 
     public static function is_true($subject, $message)
-    { self::strict_equals($subject, true, $message); }
+    { self::strict_equals(true, $subject, $message); }
 
     public static function is_not_true($subject, $message)
-    { self::must(true !== $subject, $message); }
+    { self::strict_not_equals(true, $subject, $message); }
 
     public static function is_false($subject, $message)
-    { self::strict_equals($subject, false, $message); }
+    { self::strict_equals(false, $subject, $message); }
 
     public static function is_not_false($subject, $message)
-    { self::must(false !== $subject, $message); }
+    { self::strict_not_equals(false, $subject, $message); }
 
     public static function is_null($subject, $message)
-    { self::strict_equals($subject, null, $message); }
+    { self::strict_equals(null, $subject, $message); }
 
     public static function is_not_null($subject, $message)
-    { self::must(null !== $subject, $message); }
+    { self::strict_not_equals(null, $subject, $message); }
 
     public static function is_array($subject, $message = null)
     { self::is_true(is_array($subject), (isset ($message) ? $message : "'" . var_export($subject, true) . "' is not an 'array'")); }

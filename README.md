@@ -51,6 +51,11 @@ The result of running the specs:
 
    Validate `$subject` is `$value` using strict `===`.
 
+- **not_equals**($value, $subject, $message)<br />
+  **strict_not_equals**($value, $subject, $message)
+
+   Inverted non-strict and strict validation.
+
 - **hash_equals**($reference, $subject, $message)
 
    Serialize `$subject` and `$reference` and compare their hash values. Both
