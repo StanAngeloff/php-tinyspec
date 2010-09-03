@@ -301,8 +301,10 @@ final class Group
 
     public function catch_error($code, $message, $file, $line)
     {
-        self::$unit['failed']  = true;
-        self::$unit['message'] = format("{red}$message in $file at line $line{/red}");
+        if ($code == (error_reporting() && $code)) {
+            self::$unit['failed']  = true;
+            self::$unit['message'] = format("{red}$message in $file at line $line{/red}");
+        }
     }
 
     private function catch_exception($exception)
